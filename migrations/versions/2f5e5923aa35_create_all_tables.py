@@ -1,18 +1,18 @@
-"""add users, customer, merchant, tailor, cloth, orders, admin table models
+"""create all tables
 
-Revision ID: 1ea28da34667
+Revision ID: 2f5e5923aa35
 Revises: 
-Create Date: 2026-11-02 00:16:35.479589
+Create Date: 2026-11-02 00:37:41.907105
 
 """
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = '1ea28da34667'
+revision: str = '2f5e5923aa35'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,11 +30,11 @@ def upgrade() -> None:
     sa.Column('colour', sa.String(length=40), nullable=False),
     sa.Column('colour_hex', sa.String(length=7), nullable=False),
     sa.Column('pattern', sa.String(length=40), nullable=False),
-    sa.Column('best_for', app.models.json_column.PydanticJSON(), nullable=False),
+    sa.Column('best_for', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('stock_quantity', sa.Numeric(precision=10, scale=2), nullable=False),
     sa.Column('unit_price', sa.Numeric(precision=12, scale=2), nullable=False),
-    sa.Column('prev_month_sales', app.models.json_column.PydanticJSON(), nullable=False),
-    sa.Column('images', app.models.json_column.PydanticJSON(), nullable=False),
+    sa.Column('prev_month_sales', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('images', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('clothing_category', sa.String(length=10), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -75,7 +75,7 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('phone', sa.String(length=15), nullable=False),
     sa.Column('address', sa.String(length=300), nullable=True),
-    sa.Column('measurements', app.models.json_column.PydanticJSON(), nullable=False),
+    sa.Column('measurements', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_customers_user_id_users')),
@@ -114,7 +114,7 @@ def upgrade() -> None:
     op.create_table('cloth_orders',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('customer_id', sa.Integer(), nullable=False),
-    sa.Column('items', app.models.json_column.PydanticJSON(), nullable=False),
+    sa.Column('items', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('status', sa.String(length=30), nullable=False),
     sa.Column('source', sa.String(length=20), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -134,9 +134,9 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('cloth_order_id', sa.Integer(), nullable=False),
     sa.Column('tailor_id', sa.Integer(), nullable=True),
-    sa.Column('items', app.models.json_column.PydanticJSON(), nullable=False),
-    sa.Column('cloth_measurements', app.models.json_column.PydanticJSON(), nullable=False),
-    sa.Column('stitching_description', app.models.json_column.PydanticJSON(), nullable=False),
+    sa.Column('items', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('cloth_measurements', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('stitching_description', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('status', sa.String(length=30), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('expected_finishing_date', sa.DateTime(timezone=True), nullable=False),
