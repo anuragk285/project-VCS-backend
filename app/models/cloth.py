@@ -30,7 +30,7 @@ class Cloth(Base):
     __table_args__ = (
         CheckConstraint("stock_quantity >= 0", name="stock_not_negative"),
         CheckConstraint("unit_price >= 0", name="price_not_negative"),
-        CheckConstraint("clothing_category IN ('shirt', 'pant', 'towel')", name="category_shirt_or_pant"),
+        CheckConstraint("clothing_category IN ('shirt', 'pant', 'towel')", name="valid_cloth_category"),
         Index("ix_cloths_category_active", "clothing_category", "is_active"),
     )
 

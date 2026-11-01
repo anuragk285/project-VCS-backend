@@ -51,12 +51,19 @@ def test_lists_default_to_empty(db):
     assert cloth.prev_month_sales == []
 
 
+@pytest.mark.parametrize("category", ["shirt", "pant", "towel"])
+def test_allowed_categories_are_saved(db, category):
+    db.add(make_cloth(clothing_category=category))
+    db.commit()
+    assert db.scalars(select(Cloth)).one().clothing_category == category
+
+
 @pytest.mark.parametrize(
     "bad",
     [
         {"stock_quantity": Decimal("-0.50")},
         {"unit_price": Decimal(-1)},
-        {"clothing_category": "towel"},
+        {"clothing_category": "scarf"},
     ],
 )
 def test_database_rejects_bad_values(db, bad):
