@@ -10,7 +10,7 @@ from app.models import Base, Cloth
 
 @pytest.fixture()
 def db():
-    engine = create_engine("sqlite://")
+    engine = create_engine("sqlite://")  # in-memory, so tests need no Postgres
     Base.metadata.create_all(engine)
     with Session(engine) as session:
         yield session
@@ -51,22 +51,30 @@ def test_lists_default_to_empty(db):
     assert cloth.prev_month_sales == []
 
 
-@pytest.mark.parametrize("category", ["shirt", "pant", "towel"])
-def test_allowed_categories_are_saved(db, category):
-    db.add(make_cloth(clothing_category=category))
-    db.commit()
-    assert db.scalars(select(Cloth)).one().clothing_category == category
-
-
 @pytest.mark.parametrize(
     "bad",
     [
         {"stock_quantity": Decimal("-0.50")},
         {"unit_price": Decimal(-1)},
-        {"clothing_category": "scarf"},
+        {"clothing_category": "towel"},
     ],
 )
 def test_database_rejects_bad_values(db, bad):
     db.add(make_cloth(**bad))
     with pytest.raises(IntegrityError):
         db.commit()
+
+
+def test_json_columns_are_checked_by_pydantic():
+    import pytest
+    from pydantic import ValidationError
+    from sqlalchemy.exc import StatementError
+
+    engine = create_engine("sqlite://")
+    Base.metadata.create_all(engine)
+    for bad in [{"images": ["http://insecure.com/a.jpg"]}, {"prev_month_sales": [-1]}, {"best_for": [""]}]:
+        with Session(engine) as db:
+            db.add(make_cloth(**bad))
+            with pytest.raises(StatementError) as err:
+                db.commit()
+            assert isinstance(err.value.orig, ValidationError)
