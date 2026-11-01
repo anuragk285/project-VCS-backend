@@ -1,6 +1,5 @@
 node_modules
 .venv
-migrations
 __pycache__
 .env
-DS_Store
+.DS_Store
