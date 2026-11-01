@@ -49,7 +49,7 @@ def test_stitching_json(db):
     db.add(
         StitchingOrder(
             cloth_order_id=1,
-            items=[StitchingLine(cloth_id=12, garment="shirt", length=Decimal("2.2"), stitching_cost=Decimal("450"))],
+            items=[StitchingLine(cloth_id=12, garment="shirt", length=Decimal("2.2"), stitching_cost=Decimal(450))],
             cloth_measurements={"12": {"chest": Decimal(40)}},
             stitching_description={"12": "slim fit"},
         )
