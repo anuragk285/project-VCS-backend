@@ -1,8 +1,10 @@
-from app.models.base import Base
-
 from enum import StrEnum
+
 from sqlalchemy import CheckConstraint, String
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.models.base import Base
+
 
 class UserRoles(StrEnum):
     admin = "admin"
