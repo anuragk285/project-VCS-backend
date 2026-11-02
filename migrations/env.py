@@ -5,6 +5,7 @@ from sqlalchemy import engine_from_config, pool
 
 from app.core.config import settings
 from app.models import Base  # importing app.models also loads every model
+from app.models.json_column import PydanticJSON
 
 config = context.config
 
@@ -17,6 +18,14 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def render_item(type_, obj, autogen_context):
+    """Write our PydanticJSON column as plain JSONB in migrations, so they never depend on app code."""
+    if type_ == "type" and isinstance(obj, PydanticJSON):
+        autogen_context.imports.add("from sqlalchemy.dialects import postgresql")
+        return "postgresql.JSONB(astext_type=sa.Text())"
+    return False
+
+
 def run_migrations_offline() -> None:
     """Write the SQL without connecting to the database."""
     context.configure(
@@ -25,6 +34,7 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
+        render_item=render_item,
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -38,7 +48,12 @@ def run_migrations_online() -> None:
         poolclass=pool.NullPool,
     )
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+        context.configure(
+            connection=connection,
+            target_metadata=target_metadata,
+            compare_type=True,
+            render_item=render_item,
+        )
         with context.begin_transaction():
             context.run_migrations()
 
