@@ -4,10 +4,11 @@ from fastapi import Depends, FastAPI
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.api import cloth
 from app.core.database import get_db
 
 app = FastAPI()
-
+app.include_router(cloth.router)
 
 @app.get("/health")
 def health():

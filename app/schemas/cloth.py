@@ -1,7 +1,6 @@
-from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 from app.models.cloth import ClothingCategory
 
@@ -47,11 +46,20 @@ class ClothResponse(BaseModel):
 
     stock_quantity: Decimal
     unit_price: Decimal
-    prev_month_sales: list[float]
 
     images: list[str]
     clothing_category: ClothingCategory
     is_active: bool
 
-    created_at: datetime
-    updated_at: datetime
+    @computed_field
+    @property
+    def in_stock(self) -> bool:
+        return self.stock_quantity > 0
+    
+
+class ClothPage(BaseModel):
+    items: list[ClothResponse]
+    total_cloths: int
+    page_size: int
+    page_no: int
+    total_pages: int
