@@ -56,7 +56,7 @@ def test_lists_default_to_empty(db):
     [
         {"stock_quantity": Decimal("-0.50")},
         {"unit_price": Decimal(-1)},
-        {"clothing_category": "towel"},
+        {"clothing_category": "scarf"},
     ],
 )
 def test_database_rejects_bad_values(db, bad):

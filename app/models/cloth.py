@@ -22,6 +22,7 @@ from app.schemas.cloth_json import BestFor, ImageUrls, MonthlySales
 class ClothingCategory(StrEnum):
     shirt = "shirt"
     pant = "pant"
+    towel = "towel"
 
 
 class Cloth(Base):
@@ -49,7 +50,7 @@ class Cloth(Base):
     prev_month_sales: Mapped[MonthlySales] = mapped_column(PydanticJSON(MonthlySales), default=list)  # metres sold, one per month, newest last
 
     images: Mapped[ImageUrls] = mapped_column(PydanticJSON(ImageUrls), default=list)
-    clothing_category: Mapped[str] = mapped_column(String(10))  # "shirt" or "pant"
+    clothing_category: Mapped[str] = mapped_column(String(10))  # "shirt", "pant" or "towel"
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
