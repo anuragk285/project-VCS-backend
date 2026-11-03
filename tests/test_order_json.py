@@ -16,7 +16,7 @@ def db():
     Base.metadata.create_all(engine)
     with Session(engine) as s:
         s.add(User(id=1, role="customer", email="a@b.com", password_hash="x"))
-        s.add(Customer(id=1, user_id=1, name="Ravi", phone="9999999999"))
+        s.add(Customer(id=1, user_id=1, name="Ravi"))
         s.commit()
         yield s
 

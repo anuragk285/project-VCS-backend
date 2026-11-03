@@ -26,7 +26,7 @@ def db():
                 User(id=3, role="tailor", email="t2@shop.com", password_hash="x"),
             ]
         )
-        session.add(Customer(id=1, user_id=1, name="Ravi", phone="9999999999"))
+        session.add(Customer(id=1, user_id=1, name="Ravi"))
         session.add(ClothOrder(id=1, customer_id=1, items=[]))
         session.commit()
         yield session
