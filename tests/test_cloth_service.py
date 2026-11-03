@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -6,6 +7,8 @@ from sqlalchemy.pool import StaticPool
 
 from app.models import Base, Cloth, ClothingCategory
 from app.services.cloth import list_cloths, single_cloth
+
+
 def make(name, category=ClothingCategory.shirt, colour="Navy", pattern="Plain", best_for=None, price="400", stock="10", **extra):
     return Cloth(
         name=name,
