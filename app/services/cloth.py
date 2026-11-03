@@ -83,3 +83,31 @@ def single_cloth(db: Session, *, id: int) -> Cloth | None:
         Cloth.is_active.is_(True),
     )
     return db.scalars(stmt).first()
+
+def get_cloth_filters(db: Session) -> dict:
+    """Return available filter options and the price range."""
+
+    cloths = db.scalars(
+        select(Cloth).where(Cloth.is_active.is_(True))
+    ).all()
+
+    colours = sorted({cloth.colour for cloth in cloths})
+    patterns = sorted({cloth.pattern for cloth in cloths})
+
+    best_for_values = {
+        value
+        for cloth in cloths
+        for value in (cloth.best_for or [])
+    }
+
+    prices = [cloth.unit_price for cloth in cloths]
+
+    return {
+        "colours": colours,
+        "patterns": patterns,
+        "best_for": sorted(best_for_values),
+        "price_range": {
+            "min": min(prices) if prices else None,
+            "max": max(prices) if prices else None,
+        },
+    }

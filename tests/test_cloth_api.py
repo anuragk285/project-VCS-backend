@@ -153,3 +153,24 @@ def test_get_inactive_cloth_returns_not_found(client):
 def test_get_cloth_invalid_id_format(client):
     response = client.get("/cloths/0")
     assert response.status_code == 404
+
+def test_cloth_filters(client):
+    response = client.get("/cloths/filters")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["colours"] == ["Black", "Khaki", "Maroon", "Navy", "Sky Blue"]
+    assert data["patterns"] == ["Pinstripe", "Plain", "Self design", "Twill"]
+    assert data["best_for"] == [
+        "casual",
+        "daily wear",
+        "festival",
+        "formal",
+        "office",
+        "wedding",
+    ]
+
+    assert Decimal(data["price_range"]["min"]) == Decimal("320.00")
+    assert Decimal(data["price_range"]["max"]) == Decimal("720.00")

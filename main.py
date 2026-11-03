@@ -18,5 +18,6 @@ def health():
 @app.get("/health/db")
 def health_db(db: Annotated[Session, Depends(get_db)]):
     """Proves the database connection works."""
+
     db.execute(text("SELECT 1"))
     return {"database": "ok"}
