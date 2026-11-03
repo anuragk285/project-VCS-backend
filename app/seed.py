@@ -6,11 +6,11 @@ Run from the backend folder (virtual environment active, database migrated):
 
 from decimal import Decimal
 
-from pwdlib import PasswordHash
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
+from app.core.security import hash_password
 from app.models import Cloth, Customer, Merchant, User, UserRoles
 
 # Development logins only. Never use these on a real server.
@@ -94,11 +94,11 @@ CLOTHS = [
 ]
 
 
-def get_or_create_user(session: Session, email: str, role: UserRoles, hasher: PasswordHash) -> tuple[User, bool]:
+def get_or_create_user(session: Session, email: str, role: UserRoles) -> tuple[User, bool]:
     user = session.scalars(select(User).where(User.email == email)).first()
     if user:
         return user, False
-    user = User(email=email, role=role, password_hash=hasher.hash(DEMO_PASSWORD))
+    user = User(email=email, role=role, password_hash=hash_password(DEMO_PASSWORD))
     session.add(user)
     session.flush()  # gives the user an id
     return user, True
@@ -107,9 +107,8 @@ def get_or_create_user(session: Session, email: str, role: UserRoles, hasher: Pa
 def seed(session: Session) -> dict[str, int]:
     """Adds anything missing and returns how many rows were added."""
     added = {"users": 0, "merchants": 0, "customers": 0, "cloths": 0}
-    hasher = PasswordHash.recommended()
 
-    merchant_user, new = get_or_create_user(session, MERCHANT_EMAIL, UserRoles.merchant, hasher)
+    merchant_user, new = get_or_create_user(session, MERCHANT_EMAIL, UserRoles.merchant)
     added["users"] += new
     if not session.scalars(select(Merchant).where(Merchant.user_id == merchant_user.id)).first():
         session.add(
@@ -122,7 +121,7 @@ def seed(session: Session) -> dict[str, int]:
         )
         added["merchants"] += 1
 
-    customer_user, new = get_or_create_user(session, CUSTOMER_EMAIL, UserRoles.customer, hasher)
+    customer_user, new = get_or_create_user(session, CUSTOMER_EMAIL, UserRoles.customer)
     added["users"] += new
     if not session.scalars(select(Customer).where(Customer.user_id == customer_user.id)).first():
         session.add(

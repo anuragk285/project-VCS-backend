@@ -16,7 +16,7 @@ class Customer(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     name: Mapped[str] = mapped_column(String(100))
-    phone: Mapped[str] = mapped_column(String(15), index=True)
+    phone: Mapped[str | None] = mapped_column(String(15), index=True)
     address: Mapped[str | None] = mapped_column(String(300))
     # measurements per garment, e.g. {"shirt": {"chest": 40}, "pant": {"waist": 34}}
     measurements: Mapped[CustomerMeasurements] = mapped_column(
