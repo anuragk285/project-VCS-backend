@@ -128,7 +128,6 @@ def seed(session: Session) -> dict[str, int]:
             Customer(
                 user_id=customer_user.id,
                 name="Demo Customer",
-                phone="9000000002",
                 address="Hanamkonda, Warangal",
             )
         )

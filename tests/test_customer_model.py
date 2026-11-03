@@ -11,7 +11,7 @@ def test_customer_and_orders():
     Base.metadata.create_all(engine)
     with Session(engine) as s:
         s.add(User(id=1, role="customer", email="a@b.com", password_hash="x"))
-        c = Customer(user_id=1, name="Ravi", phone="9999999999", measurements={"shirt": {"chest": Decimal(40)}})
+        c = Customer(user_id=1, name="Ravi", measurements={"shirt": {"chest": Decimal(40)}})
         c.orders.append(ClothOrder(items=[]))
         s.add(c)
         s.commit()
