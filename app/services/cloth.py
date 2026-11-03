@@ -74,3 +74,12 @@ def list_cloths(
         "page_size": page_size,
         "total_pages": math.ceil(total_cloths / page_size) if total_cloths else 0,
     }
+
+def single_cloth(db: Session, *, id: int) -> Cloth | None:
+    if id <= 0:
+        return None
+    stmt = select(Cloth).where(
+        Cloth.id == id,
+        Cloth.is_active.is_(True),
+    )
+    return db.scalars(stmt).first()

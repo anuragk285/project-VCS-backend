@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models import ClothingCategory
-from app.schemas.cloth import ClothPage
+from app.schemas.cloth import ClothPage, ClothResponse
 from app.services import cloth as cloth_service
 
 router = APIRouter(prefix="/cloths", tags=["cloths"])
@@ -41,3 +41,10 @@ def get_cloths(
         page_no=page_no,
         page_size=page_size,
     )
+
+@router.get("/{id}", response_model=ClothResponse)
+def get_cloth_(id: int, db: Annotated[Session, Depends(get_db)]):
+    cloth = cloth_service.single_cloth(db=db, id=id)
+    if not cloth:
+        raise HTTPException(status_code=404, detail=f"No cloth found with id = {id}")
+    return cloth
