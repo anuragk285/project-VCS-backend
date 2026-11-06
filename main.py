@@ -5,11 +5,13 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api import auth, cloth
+from app.api.login import router as login_router
 from app.core.database import get_db
 
 app = FastAPI()
-app.include_router(cloth.router)
 app.include_router(auth.router)
+app.include_router(cloth.router)
+app.include_router(login_router)
 
 @app.get("/health")
 def health():
