@@ -8,6 +8,8 @@ from app.api import auth, cloth
 from app.api.login import router as login_router
 from app.core.database import get_db
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI()
 app.include_router(auth.router)
 app.include_router(cloth.router)
@@ -24,3 +26,11 @@ def health_db(db: Annotated[Session, Depends(get_db)]):
 
     db.execute(text("SELECT 1"))
     return {"database": "ok"}
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
