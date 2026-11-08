@@ -1,14 +1,13 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api import auth, cloth
 from app.api.login import router as login_router
 from app.core.database import get_db
-
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.include_router(auth.router)
