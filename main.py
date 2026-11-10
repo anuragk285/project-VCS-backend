@@ -6,6 +6,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api import auth, cloth
+from app.api.deps import CurrentMerchant
 from app.api.login import router as login_router
 from app.core.database import get_db
 
@@ -33,3 +34,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/tmp-merchant")
+def test_merchant(merchant: CurrentMerchant):
+    return {"message": "Merchant access granted"}

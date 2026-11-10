@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.security import TokenError, decode_access_token
-from app.models import User
+from app.models import User, UserRoles
 
 # Shows an "Authorize" button in /docs where you paste the access_token from /auth/login.
 bearer_scheme = HTTPBearer(auto_error=False, description="Paste the access_token from POST /auth/login")
@@ -36,3 +36,28 @@ def get_current_user(
 
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
+
+
+def require_role(*allowed_roles: UserRoles):
+    """Builds a dependency that lets in only users with one of these roles."""
+
+    def check_role(user: CurrentUser) -> User:
+        if user.role not in allowed_roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to do that"
+            )
+        return user
+
+    return check_role
+
+
+require_customer = require_role(UserRoles.customer)
+require_merchant = require_role(UserRoles.merchant)
+
+
+CurrentCustomer = Annotated[User, Depends(require_customer)]
+
+
+CurrentMerchant = Annotated[User, Depends(require_merchant)]
+
